@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Cw5.DTOs.Requests;
@@ -27,10 +28,37 @@ namespace Cw5.Controller
 
             var resp = new EnrollStudentResponse();
             resp.LastName = newSt.LastName;
-            resp.Semester = newSt.Semester;
-            resp.StartDate = newSt.StartDate;
 
-            return Ok();
+
+            using (SqlConnection con = new SqlConnection(ConString))
+            using (SqlCommand com = new SqlCommand())
+            {
+
+                com.Connection = con;
+                com.CommandText = "select * from student inner join Enrollment on Student.IdEnrollment=Enrollment.IdEnrollment where indexnumber=@index";
+
+                com.Parameters.AddWithValue("index", indexNumber);
+
+                con.Open();
+                var dr = com.ExecuteReader();
+                if (dr.Read())
+                {
+                    var st = new Student();
+                    st.IndexNumber = dr["IndexNumber"].ToString();
+                    st.IdEnrollment = int.Parse(dr["IdEnrollment"].ToString());
+                    st.Semester = int.Parse(dr["Semester"].ToString());
+                    st.IdStudy = int.Parse(dr["IdStudy"].ToString());
+                    st.StartDate = dr["StartDate"].ToString();
+                    return Ok(st);
+                }
+
+            }
+
+
+
+
+
+            return Ok(resp);
         }
     }
 }
