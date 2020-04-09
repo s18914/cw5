@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Cw5.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Cw5.DAL
 {
-    public class IDbService
+    public interface IDbService
     {
+        public IEnumerable<Student> GetStudents();
+        public void DeleteStudents(int id);
     }
+} 
 }
+

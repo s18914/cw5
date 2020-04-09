@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Cw5.DTOs.Requests;
 using Cw5.DTOs.Responses;
 using Cw5.Models;
+using CW5.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,50 +16,32 @@ namespace Cw5.Controller
     [ApiController]
     public class EnrollmentsController : ControllerBase
     {
+        private const String ConString = "Data Source=db-mssql;Initial Catalog=s18914;Integrated Security=True";
+
+        private readonly IStudentsDbService _dbService;
+
+        public EnrollmentsController(IStudentsDbService dbService)
+        {
+            _dbService = dbService;
+        }
+
+
         [HttpPost]
         public IActionResult EnrollStudent(EnrollStudentRequest req)
         {
+            _dbService.EnrollStudent(req);
+            var response = new EnrollStudentResponse();
 
-            var newSt = new Student();
-            newSt.FirstName = req.FirstName;
-            newSt.LastName = req.LastName;
-            newSt.IndexNumber = req.IndexNumber;
-            newSt.BirthDate = req.BirthDate;
-            newSt.Studies = req.Studies;
-
-            var resp = new EnrollStudentResponse();
-            resp.LastName = newSt.LastName;
-
-
-            using (SqlConnection con = new SqlConnection(ConString))
-            using (SqlCommand com = new SqlCommand())
-            {
-
-                com.Connection = con;
-                com.CommandText = "select * from student inner join Enrollment on Student.IdEnrollment=Enrollment.IdEnrollment where indexnumber=@index";
-
-                com.Parameters.AddWithValue("index", indexNumber);
-
-                con.Open();
-                var dr = com.ExecuteReader();
-                if (dr.Read())
-                {
-                    var st = new Student();
-                    st.IndexNumber = dr["IndexNumber"].ToString();
-                    st.IdEnrollment = int.Parse(dr["IdEnrollment"].ToString());
-                    st.Semester = int.Parse(dr["Semester"].ToString());
-                    st.IdStudy = int.Parse(dr["IdStudy"].ToString());
-                    st.StartDate = dr["StartDate"].ToString();
-                    return Ok(st);
-                }
-
-            }
-
-
-
-
-
-            return Ok(resp);
+            return CreatedAtAction("EnrollStudent", response);
         }
+
+        [HttpPost("promotions")]
+        public IActionResult PromoteStudents(Promotion promotion)
+        {
+
+            return Ok();
+        }
+
+
     }
 }
