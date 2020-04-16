@@ -22,6 +22,10 @@ namespace CW5.DAL
 
         }
 
+        public void DeleteStudents(int id)
+        {
+            throw new NotImplementedException();
+        }
 
         public IEnumerable<Student> GetStudents()
         {
