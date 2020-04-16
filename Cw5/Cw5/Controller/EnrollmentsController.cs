@@ -29,6 +29,7 @@ namespace Cw5.Controller
         [HttpPost]
         public IActionResult EnrollStudent(EnrollStudentRequest req)
         {
+
             _dbService.EnrollStudent(req);
             var response = new EnrollStudentResponse();
 

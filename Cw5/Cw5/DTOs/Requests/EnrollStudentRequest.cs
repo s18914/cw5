@@ -6,18 +6,24 @@ using System.Threading.Tasks;
 
 namespace Cw5.DTOs.Requests
 {
-    public class EnrollStudentRequest
+    public class EnrollStudentRequest : Attribute
     {
-        [Required]
+        [Required(ErrorMessage = "podaj index")]
         [RegularExpression("^s[0-9]+$")]
-        public string FirstName { get; set; }
-        [Required]
-        public string LastName { get; set; }
-        [Required]
         public string IndexNumber { get; set; }
-        [Required]
-        public string BirthDate { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "podaj imię")]
+        [MaxLength(100)]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "podaj nazwisko")]
+        [MaxLength(100)]
+        public string LastName { get; set; }
+
+        [Required(ErrorMessage = "podaj date urodzenia")]
+        public string BirthDay { get; set; }
+
+        [Required(ErrorMessage = "podaj kierunek studiów")]
         public string Studies { get; set; }
     }
 }
