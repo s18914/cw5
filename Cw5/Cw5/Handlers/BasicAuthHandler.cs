@@ -1,11 +1,43 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace Cw5.Handlers
 {
-    public class BasicAuthHandler
+    public class BasicAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
+
+        public BasicAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, 
+            ILoggerFactory logger,            //wstrzyknięcie modułu do logowanie
+            UrlEncoder encoder,               //odkoduje adres url
+            ISystemClock clock)  : base(options, logger, encoder, clock)
+        {
+
+        }
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+        {
+            if (!Request.Headers.ContainsKey("Authorisation"))
+                return AuthenticateResult.Fail("Brak autoryzacji");
+
+            var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorisation"]);
+            var creBytes = Convert.FromBase64String(authHeader.Parameter);
+            var cre = Encoding.UTF8.GetString(creBytes).Split(":");
+
+            if(cre.Length!=2)
+                return AuthenticateResult.Fail("Brak autoryzacji");
+
+            //teraz sprawdzam czy taki user i hasło istnieją
+
+
+            return AuthenticateResult.Success(null);
+
+        }
     }
 }
