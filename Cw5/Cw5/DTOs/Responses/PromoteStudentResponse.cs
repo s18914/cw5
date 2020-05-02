@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cw5.DTOs.Responses
+namespace CW5.DTOs.Response
 {
-    public class EnrollStudentResponse
+    public class PromoteStudentResponse
     {
         public int IdEnrollment { get; set; }
-        public int Semester { get; set; }
-        public string Name { get; set; }
+        public string Semester { get; set; }
+        public string IdStudy { get; set; }
         public DateTime StartDate { get; set; }
     }
 }

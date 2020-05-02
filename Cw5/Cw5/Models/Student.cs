@@ -17,6 +17,7 @@ namespace Cw5.Models
         public string BirthDate { get; set; }
 
         public string Studies { get; set; }
+        public int Semester { get; set; }
 
     }
 }

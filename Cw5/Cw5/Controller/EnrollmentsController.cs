@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 using Cw5.DTOs.Requests;
 using Cw5.DTOs.Responses;
-using Cw5.Models;
+using CW5.DTOs.Request;
+using CW5.DTOs.Response;
 using CW5.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cw5.Controller
@@ -29,6 +25,7 @@ namespace Cw5.Controller
         [HttpPost]
         public IActionResult EnrollStudent(EnrollStudentRequest req)
         {
+
             _dbService.EnrollStudent(req);
             var response = new EnrollStudentResponse();
 
@@ -36,10 +33,13 @@ namespace Cw5.Controller
         }
 
         [HttpPost("promotions")]
-        public IActionResult PromoteStudents(Promotion promotion)
+        public IActionResult PromoteStudents(PromoteStudentRequest preq)
         {
 
-            return Ok();
+            PromoteStudentResponse pres = new PromoteStudentResponse();
+
+            pres = _dbService.PromoteStudent(preq);
+            return Created("promote", pres);
         }
 
 
