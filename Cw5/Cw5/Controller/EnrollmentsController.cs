@@ -4,6 +4,7 @@ using Cw5.DTOs.Responses;
 using CW5.DTOs.Request;
 using CW5.DTOs.Response;
 using CW5.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cw5.Controller
@@ -23,6 +24,7 @@ namespace Cw5.Controller
 
 
         [HttpPost]
+        [Authorize(Roles = "employee")]
         public IActionResult EnrollStudent(EnrollStudentRequest req)
         {
 
@@ -33,6 +35,7 @@ namespace Cw5.Controller
         }
 
         [HttpPost("promotions")]
+        [Authorize(Roles = "employee")]
         public IActionResult PromoteStudents(PromoteStudentRequest preq)
         {
 

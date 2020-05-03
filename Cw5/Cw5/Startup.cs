@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cw5.Handlers;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +26,9 @@ namespace Cw5
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthHandler>("BasicAuthentication",null);
+            services.AddControllers(); 
             services.AddControllers();
         }
 
@@ -36,6 +41,9 @@ namespace Cw5
             }
 
             app.UseRouting();
+
+            // login i haslo
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
