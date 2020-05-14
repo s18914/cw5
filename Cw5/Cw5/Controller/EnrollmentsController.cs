@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -58,8 +59,30 @@ namespace Cw5.Controller
         [HttpPost]
         public IActionResult Login(LoginRequest request)
         {
+            var h = request.Password;
+            var hDB = "";
+            using (var con = new SqlConnection("Data Source=db-mssql ;Initial Catalog=s18914; Integrated Security = True"))
+            using (var com = new SqlCommand())
 
-            //sprawdzam login i haslo
+            {
+
+                com.Connection = con;
+                com.CommandText = "SELECT Passw from student where IndexNumber = @user";
+                com.Parameters.AddWithValue("user", request.Login);
+                con.Open();
+
+                var dr = com.ExecuteReader();
+                while (dr.Read())
+                {
+                    hDB = dr["password"].ToString();
+                }
+
+            }
+
+            if (!h.Equals(hDB))
+            {
+                return BadRequest("Incorrect password");
+            }
 
             var claims = new[]
            {
@@ -82,9 +105,41 @@ namespace Cw5.Controller
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
-                refreshToken = "token"
+                refreshToken = Guid.NewGuid()
+            }) ;
+
+        }
+
+        [HttpPost("refresh-token")]
+        public IActionResult RefreshToken(string refreshToken)
+        {
+            
+            var claims = new[]
+           {
+                new Claim(ClaimTypes.Name, "Mila123"),
+                new Claim(ClaimTypes.Role, "employee")
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["SecretKey"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: "https://localhost",
+                audience: "https://localhost",
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(10),
+                signingCredentials: creds
+                );
+
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                refreshToken = Guid.NewGuid()
             });
 
+
+            return Ok();
         }
 
 
